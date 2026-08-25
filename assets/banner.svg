@@ -1,0 +1,63 @@
+<svg viewBox="0 0 1000 360" xmlns="http://www.w3.org/2000/svg" width="1000" height="360" preserveAspectRatio="xMidYMid meet">
+  <title>transformer-alternatives, what replaces attention when the KV cache stops fitting</title>
+  <!--
+  NODE REGISTRY (x, y, w, h)
+  C1  65 134 270 80    C2 365 134 270 80    C3 665 134 270 80
+  axis line y=252, from x=65 to x=935
+  badges row y=306 h=26, gap=12, start x=267
+  -->
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+      text { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
+    </style>
+    <filter id="shadow-sm" x="-5%" y="-5%" width="115%" height="125%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000018"/>
+    </filter>
+    <marker id="arrow-axis" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <polygon points="0 0, 7 3.5, 0 7" fill="#94A3B8"/>
+    </marker>
+  </defs>
+
+  <rect width="1000" height="360" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="500" y="56" font-size="26" font-weight="700" fill="#111827" text-anchor="middle">transformer-alternatives</text>
+  <text x="500" y="80" font-size="12" font-weight="400" fill="#6B7280" text-anchor="middle">what replaces attention once the KV cache stops fitting, and what each swap actually costs</text>
+  <line x1="450" y1="100" x2="550" y2="100" stroke="#06B6D4" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- C1 full attention -->
+  <rect x="65" y="134" width="270" height="80" rx="12" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <text x="200" y="168" font-size="14" font-weight="600" fill="#1E293B" text-anchor="middle">Full attention</text>
+  <text x="200" y="190" font-size="11" font-weight="400" fill="#1D4ED8" text-anchor="middle">perfect recall, quadratic cost</text>
+
+  <!-- C2 hybrid -->
+  <rect x="365" y="134" width="270" height="80" rx="12" fill="#FEF9C3" stroke="#EAB308" stroke-width="1.8" filter="url(#shadow-sm)"/>
+  <text x="500" y="168" font-size="14" font-weight="600" fill="#1E293B" text-anchor="middle">Hybrid, 3 linear to 1 attention</text>
+  <text x="500" y="190" font-size="11" font-weight="400" fill="#975a13" text-anchor="middle">where everyone landed in 2026</text>
+
+  <!-- C3 recurrent -->
+  <rect x="665" y="134" width="270" height="80" rx="12" fill="#ECFEFF" stroke="#06B6D4" stroke-width="1.5" filter="url(#shadow-sm)"/>
+  <text x="800" y="168" font-size="14" font-weight="600" fill="#1E293B" text-anchor="middle">Pure recurrent</text>
+  <text x="800" y="190" font-size="11" font-weight="400" fill="#0E7490" text-anchor="middle">constant memory, fading recall</text>
+
+  <!-- Axis -->
+  <line x1="65" y1="252" x2="928" y2="252" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow-axis)"/>
+  <text x="500" y="276" font-size="11" font-weight="500" fill="#64748B" text-anchor="middle">left to right, the memory carried per token falls, and so does the ability to recall an exact token seen earlier</text>
+
+  <!-- Badges -->
+  <rect x="267" y="306" width="44" height="26" rx="13" fill="#ECFEFF" stroke="#06B6D4" stroke-width="1"/>
+  <text x="289" y="323" font-size="11" font-weight="600" fill="#0E7490" text-anchor="middle">SSM</text>
+
+  <rect x="323" y="306" width="123" height="26" rx="13" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="1"/>
+  <text x="384" y="323" font-size="11" font-weight="600" fill="#6D28D9" text-anchor="middle">linear attention</text>
+
+  <rect x="458" y="306" width="86" height="26" rx="13" fill="#FDF2F8" stroke="#EC4899" stroke-width="1"/>
+  <text x="501" y="323" font-size="11" font-weight="600" fill="#9D174D" text-anchor="middle">modern RNN</text>
+
+  <rect x="556" y="306" width="67" height="26" rx="13" fill="#FEF9C3" stroke="#EAB308" stroke-width="1"/>
+  <text x="589" y="323" font-size="11" font-weight="600" fill="#975a13" text-anchor="middle">hybrids</text>
+
+  <rect x="635" y="306" width="98" height="26" rx="13" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1"/>
+  <text x="684" y="323" font-size="11" font-weight="600" fill="#1D4ED8" text-anchor="middle">diffusion LM</text>
+</svg>

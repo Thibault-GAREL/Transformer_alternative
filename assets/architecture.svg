@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 820" preserveAspectRatio="xMidYMid meet" width="1360" height="820">
+  <title>What replaces attention inside the block, and what each choice costs</title>
+
+  <!-- NODE REGISTRY (x, y, w, h)
+       P1 panel   |  40 | 110 | 380 | 440      P1 Input   |  72 | 170 | 316 |  48
+       P1 Mixing  |  72 | 250 | 316 | 110      P1 FFN     |  72 | 392 | 316 |  70
+       P1 Output  |  72 | 494 | 316 |  48
+       P2 panel   | 460 | 110 | 380 | 440      P2 Input   | 492 | 170 | 316 |  48
+       P2 Mixing  | 492 | 250 | 316 | 110      P2 FFN     | 492 | 392 | 316 |  70
+       P2 Output  | 492 | 494 | 316 |  48
+       P3 panel   | 880 | 110 | 440 | 440      P3 Input   | 912 | 170 | 376 |  48
+       P3 L1..L3  | 912 | 248/286/324 | 376 | 32          P3 Attn | 912 | 362 | 376 | 32
+       P3 FFN     | 912 | 416 | 376 |  52      P3 Output  | 912 | 494 | 376 |  48
+       C1 | 40 | 580 | 380 | 130   C2 | 460 | 580 | 380 | 130   C3 | 880 | 580 | 440 | 130
+       NOTE | 40 | 742 | 1280 | 52
+  -->
+
+  <defs>
+    <style>@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');</style>
+
+    <filter id="shadow-sm" x="-5%" y="-5%" width="110%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000018"/>
+    </filter>
+    <filter id="shadow-md" x="-5%" y="-5%" width="115%" height="125%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#00000020"/>
+    </filter>
+
+    <marker id="arrow-slate" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 Z" fill="#94A3B8"/>
+    </marker>
+    <marker id="arrow-small" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto">
+      <path d="M0,0 L5,2.5 L0,5 Z" fill="#94A3B8"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1360" height="820" fill="#FFFFFF"/>
+
+  <!-- ===================== TITLE ===================== -->
+  <text x="40" y="52" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="18" font-weight="700" fill="#1E293B">What replaces attention, and what it costs</text>
+  <text x="40" y="76" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="400" fill="#64748B">Only the mixing layer changes. Everything else in the block stays exactly where it was.</text>
+
+  <!-- ===================== PANEL 1: transformer ===================== -->
+  <rect x="40" y="110" width="380" height="440" rx="14" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2" stroke-dasharray="6,4"/>
+  <text x="72" y="140" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" letter-spacing="0.4" fill="#475569">TRANSFORMER BLOCK</text>
+
+  <rect x="72" y="170" width="316" height="48" rx="10" fill="#FFEDD5" stroke="#F97316" stroke-width="1.4" filter="url(#shadow-sm)"/>
+  <text x="230" y="199" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#1E293B">Input tokens</text>
+
+  <rect x="72" y="250" width="316" height="110" rx="10" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.8" filter="url(#shadow-md)"/>
+  <text x="230" y="282" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#1E293B">Softmax attention</text>
+  <text x="230" y="302" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#6B7280">every token sees every previous one</text>
+  <text x="230" y="332" text-anchor="middle" font-family="'Cascadia Mono', Consolas, monospace" font-size="13" font-weight="600" fill="#1D4ED8">softmax(QKᵀ/√d)·V</text>
+
+  <rect x="72" y="392" width="316" height="70" rx="10" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="1.4" filter="url(#shadow-sm)"/>
+  <text x="230" y="424" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#1E293B">Feed-forward</text>
+  <text x="230" y="443" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#6D28D9">unchanged, in all three</text>
+
+  <rect x="72" y="494" width="316" height="48" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-width="1.4" filter="url(#shadow-sm)"/>
+  <text x="230" y="523" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#1E293B">Output</text>
+
+  <path d="M 230,218 L 230,244" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-slate)"/>
+  <path d="M 230,360 L 230,386" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-slate)"/>
+  <path d="M 230,462 L 230,488" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-slate)"/>
+
+  <!-- ===================== PANEL 2: recurrent ===================== -->
+  <rect x="460" y="110" width="380" height="440" rx="14" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2" stroke-dasharray="6,4"/>
+  <text x="492" y="140" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" letter-spacing="0.4" fill="#475569">RECURRENT BLOCK</text>
+
+  <rect x="492" y="170" width="316" height="48" rx="10" fill="#FFEDD5" stroke="#F97316" stroke-width="1.4" filter="url(#shadow-sm)"/>
+  <text x="650" y="199" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#1E293B">Input tokens</text>
+
+  <rect x="492" y="250" width="316" height="110" rx="10" fill="#ECFEFF" stroke="#06B6D4" stroke-width="1.8" filter="url(#shadow-md)"/>
+  <text x="650" y="282" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#1E293B">SSM or linear attention</text>
+  <text x="650" y="302" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#6B7280">each token overwrites one fixed state</text>
+  <text x="650" y="332" text-anchor="middle" font-family="'Cascadia Mono', Consolas, monospace" font-size="13" font-weight="600" fill="#0E7490">hₜ = A·hₜ₋₁ + B·xₜ</text>
+
+  <rect x="492" y="392" width="316" height="70" rx="10" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="1.4" filter="url(#shadow-sm)"/>
+  <text x="650" y="424" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#1E293B">Feed-forward</text>
+  <text x="650" y="443" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#6D28D9">unchanged</text>
+
+  <rect x="492" y="494" width="316" height="48" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-width="1.4" filter="url(#shadow-sm)"/>
+  <text x="650" y="523" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#1E293B">Output</text>
+
+  <path d="M 650,218 L 650,244" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-slate)"/>
+  <path d="M 650,360 L 650,386" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-slate)"/>
+  <path d="M 650,462 L 650,488" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-slate)"/>
+
+  <!-- ===================== PANEL 3: hybrid ===================== -->
+  <rect x="880" y="110" width="440" height="440" rx="14" fill="#FEF9C3" fill-opacity="0.35" stroke="#EAB308" stroke-width="1.6"/>
+  <text x="912" y="140" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" letter-spacing="0.4" fill="#975a13">HYBRID BLOCK, WHAT ACTUALLY SHIPS</text>
+
+  <rect x="912" y="170" width="376" height="48" rx="10" fill="#FFEDD5" stroke="#F97316" stroke-width="1.4" filter="url(#shadow-sm)"/>
+  <text x="1100" y="199" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#1E293B">Input tokens</text>
+
+  <rect x="904" y="240" width="392" height="162" rx="10" fill="none" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="5,3"/>
+
+  <rect x="912" y="248" width="376" height="32" rx="7" fill="#ECFEFF" stroke="#06B6D4" stroke-width="1.4"/>
+  <text x="1100" y="269" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="#0E7490">Gated DeltaNet or Mamba-2</text>
+
+  <rect x="912" y="286" width="376" height="32" rx="7" fill="#ECFEFF" stroke="#06B6D4" stroke-width="1.4"/>
+  <text x="1100" y="307" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="#0E7490">Gated DeltaNet or Mamba-2</text>
+
+  <rect x="912" y="324" width="376" height="32" rx="7" fill="#ECFEFF" stroke="#06B6D4" stroke-width="1.4"/>
+  <text x="1100" y="345" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="500" fill="#0E7490">Gated DeltaNet or Mamba-2</text>
+
+  <rect x="912" y="362" width="376" height="32" rx="7" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.6"/>
+  <text x="1100" y="383" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="600" fill="#1D4ED8">Softmax attention</text>
+
+  <rect x="1224" y="230" width="60" height="20" rx="10" fill="#FFFFFF" stroke="#94A3B8" stroke-width="1"/>
+  <text x="1254" y="244" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="10" font-weight="600" fill="#475569">× 12</text>
+
+  <rect x="912" y="416" width="376" height="52" rx="10" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="1.4" filter="url(#shadow-sm)"/>
+  <text x="1100" y="440" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#1E293B">MoE feed-forward</text>
+  <text x="1100" y="458" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#6D28D9">sparse, a few experts per token</text>
+
+  <rect x="912" y="494" width="376" height="48" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-width="1.4" filter="url(#shadow-sm)"/>
+  <text x="1100" y="523" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="600" fill="#1E293B">Output</text>
+
+  <path d="M 1100,218 L 1100,236" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-small)"/>
+  <path d="M 1100,402 L 1100,412" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-small)"/>
+  <path d="M 1100,468 L 1100,488" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" marker-end="url(#arrow-slate)"/>
+
+  <!-- ===================== COST CARDS ===================== -->
+  <rect x="40" y="580" width="380" height="130" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.4"/>
+  <text x="72" y="608" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="600" fill="#1E293B">Carries a KV cache</text>
+  <text x="72" y="632" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#64748B">Memory</text>
+  <text x="168" y="632" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#991B1B">O(n), grows every token</text>
+  <text x="72" y="654" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#64748B">Compute</text>
+  <text x="168" y="654" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#991B1B">O(n²)</text>
+  <text x="72" y="676" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#64748B">Exact recall</text>
+  <text x="168" y="676" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#065F46">yes, always</text>
+
+  <rect x="460" y="580" width="380" height="130" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.4"/>
+  <text x="492" y="608" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="600" fill="#1E293B">Carries one fixed-size state</text>
+  <text x="492" y="632" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#64748B">Memory</text>
+  <text x="588" y="632" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#065F46">O(1), constant</text>
+  <text x="492" y="654" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#64748B">Compute</text>
+  <text x="588" y="654" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#065F46">O(n)</text>
+  <text x="492" y="676" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#64748B">Exact recall</text>
+  <text x="588" y="676" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#991B1B">fades once the state is full</text>
+
+  <rect x="880" y="580" width="440" height="130" rx="12" fill="#FEF9C3" stroke="#EAB308" stroke-width="1.6" filter="url(#shadow-sm)"/>
+  <text x="912" y="608" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="600" fill="#1E293B">Carries one cache for every three states</text>
+  <text x="912" y="632" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#64748B">Memory</text>
+  <text x="1008" y="632" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#975a13">about a quarter of full attention</text>
+  <text x="912" y="654" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#64748B">Compute</text>
+  <text x="1008" y="654" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#975a13">near linear</text>
+  <text x="912" y="676" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#64748B">Exact recall</text>
+  <text x="1008" y="676" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="600" fill="#065F46">yes, the attention layers do it</text>
+
+  <!-- ===================== NOTE ===================== -->
+  <rect x="40" y="742" width="1280" height="52" rx="12" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.2"/>
+  <text x="72" y="766" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="12" font-weight="600" fill="#1E293B">The 2026 convergence</text>
+  <text x="72" y="784" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="11" font-weight="400" fill="#64748B">NVIDIA Nemotron 3 Nano, Qwen 3.5 and Mamba-3 landed independently on the same recipe, roughly 75% linear layers, 25% softmax attention, and a sparse MoE feed-forward.</text>
+</svg>

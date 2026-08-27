@@ -36,7 +36,7 @@ It is the third of a series. [Language Models from Scratch](https://github.com/T
 
   🧩 **The hybrids**, the 3:1 ratio three independent teams converged on in March 2026
 
-  🗺️ **One diagram**, three blocks side by side, because only the mixing layer ever changes
+  🗺️ **Five diagrams**, the block comparison plus one per family, each drawn so the mechanism reads from the picture alone
 
   🧪 **Provider-agnostic comparisons**, the same block harness with one mixer slot, so families swap without touching anything else
 
@@ -103,6 +103,8 @@ Three blocks, one difference. The left keeps every token, the middle keeps one s
 
 **A recurrence borrowed from control theory, made trainable in parallel.**
 
+![State space models, the recurrence unrolled over four tokens, where the selective parameters come from, and the parallel scan that trains it](assets/ssm.svg)
+
 ```python
 # What runs at inference, one token at a time. h is the entire memory.
 for t in range(seq_len):
@@ -127,6 +129,8 @@ y = associative_scan(A, B, C, x)   # O(n) work, O(log n) depth on a GPU
 
 **Drop the softmax and the algebra reassociates, which is all it takes.**
 
+![Linear attention, the bracket move that deletes the cache, the running matrix S written by an outer product and read by the query, and the five write rules](assets/linear-attention.svg)
+
 ```
 attention          softmax(q · kᵀ) · v          the softmax blocks reassociation, so O(n²)
 
@@ -148,6 +152,8 @@ linear attention   (φ(q) · φ(k)ᵀ) · v
 ## 3️⃣ The hybrids
 
 **Nobody ships pure. The interesting question is the ratio.**
+
+![The hybrids, the 3 to 1 layer pattern across 48 layers, sequential against parallel wiring, and what the ratio buys on recall and on cache memory](assets/hybrids.svg)
 
 ```
 Qwen3-Next 80B-A3B, 48 layers
@@ -171,6 +177,8 @@ Qwen3-Next 80B-A3B, 48 layers
 ## 4️⃣ The outsiders
 
 **Different axis entirely, these change when tokens are produced, not how they mix.**
+
+![The outsiders, diffusion decoding against autoregressive decoding, block sparse attention on the causal matrix, and the test-time memory loop of Titans](assets/outsiders.svg)
 
 ```
 autoregressive   one token per forward pass, left to right     n passes for n tokens
@@ -203,7 +211,11 @@ diffusion        a whole masked passage, refined in k rounds   k passes, k far b
 ```bash
 ├── assets/
 │   ├── banner.svg
-│   └── architecture.svg      # three blocks, one difference
+│   ├── architecture.svg      # three blocks, one difference
+│   ├── ssm.svg               # the recurrence, selectivity, the parallel scan
+│   ├── linear-attention.svg  # the bracket move, the matrix S, the write rules
+│   ├── hybrids.svg           # the 3:1 stack, both wirings, what it buys
+│   └── outsiders.svg         # diffusion, block sparse attention, test-time memory
 │
 ├── scripts/
 │   └── md_to_pdf.py          # renders this README to PDF via headless Edge
@@ -232,7 +244,7 @@ diffusion        a whole masked passage, refined in k rounds   k passes, k far b
 
 ## 💻 Run it on Your PC
 
-🚨 **There is nothing to run yet.** The README is the current state, the package is the plan. Cloning still helps, the diagram reads better locally than on GitHub (the `Inter` import is blocked by GitHub's sandbox).
+🚨 **There is nothing to run yet.** The README is the current state, the package is the plan. Cloning still helps, the five diagrams read better locally than on GitHub (the `Inter` import is blocked by GitHub's sandbox).
 
 ```bash
 git clone https://github.com/Thibault-GAREL/Transformer_alternative.git

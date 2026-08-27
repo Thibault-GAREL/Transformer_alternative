@@ -99,7 +99,12 @@ blockquote {
 }
 blockquote p { margin: 0; }
 
-img { max-width: 100%; height: auto; }
+/* The family diagrams are tall. Keep each one whole rather than split over a page break. */
+img { max-width: 100%; height: auto; break-inside: avoid; }
+p:has(> img) { break-inside: avoid; margin: 12pt 0; }
+/* A diagram too tall for the space left starts a new page. Drag its heading and its
+   tagline along, so no section title is stranded above a blank half page. */
+h2 + p:has(> img), h2 + p + p:has(> img) { break-before: avoid; }
 p[align="center"] { text-align: center; break-inside: avoid; }
 
 /* <details> is collapsed by default in a browser, and a collapsed block prints

@@ -1,0 +1,342 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1360 1380" preserveAspectRatio="xMidYMid meet" width="1360" height="1380">
+  <title>Linear attention and modern RNNs: the bracket move, the running matrix S, and the five write rules</title>
+
+  <!-- NODE REGISTRY (x, y, w, h)
+       PANEL1  40 110 1280 330    cardL 72 186 588 236    cardR 700 186 588 236
+       PANEL2  40 460 1280 360    write: k col 88 560 24 132 | v row 118 530 132 24 | kv grid 118 560 132 132 | S grid 330 560 132 132
+                                  read : q row 716 614 132 24 | S grid 896 560 132 132 | y row 1076 614 132 24
+       callout 72 762 1216 40
+       PANEL3  40 840 1280 340    rows x=72 w=1216 h=38 at y = 938 982 1026 1070 1114
+       PANEL4  cards 72 1222 520 76 | pill 612 1238 136 44 | card 768 1222 520 76
+  -->
+
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap');
+      text { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; }
+      .mono { font-family: 'Cascadia Mono', Consolas, 'Courier New', monospace; }
+      .title { font-size: 21px; font-weight: 700; fill: #111827; }
+      .sub   { font-size: 12px; fill: #64748B; }
+      .sec   { font-size: 13px; font-weight: 600; letter-spacing: 0.4px; fill: #334155; }
+      .ssub  { font-size: 11px; fill: #64748B; }
+      .node  { font-size: 13px; font-weight: 600; fill: #1E293B; }
+      .n12   { font-size: 12px; font-weight: 600; fill: #1E293B; }
+      .s11   { font-size: 11px; fill: #64748B; }
+      .s10   { font-size: 10px; fill: #94A3B8; }
+      .mid   { text-anchor: middle; }
+      .end   { text-anchor: end; }
+      .cy { fill: #0E7490; } .vi { fill: #6D28D9; } .rd { fill: #991B1B; }
+      .gr { fill: #065F46; } .ye { fill: #975A13; } .sl { fill: #475569; } .bl { fill: #1D4ED8; }
+      .b { font-weight: 600; } .b7 { font-weight: 700; }
+    </style>
+
+    <filter id="sh-sm" x="-6%" y="-6%" width="112%" height="124%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000018"/>
+    </filter>
+
+    <marker id="ar-sl" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 Z" fill="#94A3B8"/></marker>
+    <marker id="ar-rd" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 Z" fill="#EF4444"/></marker>
+    <marker id="ar-cy" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <path d="M0,0 L7,3.5 L0,7 Z" fill="#06B6D4"/></marker>
+
+    <!-- 5x5 cell outline grid, 132 x 132 -->
+    <g id="g5">
+      <rect x="0"   y="0"   width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="27"  y="0"   width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="54"  y="0"   width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="81"  y="0"   width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="108" y="0"   width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="0"   y="27"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="27"  y="27"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="54"  y="27"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="81"  y="27"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="108" y="27"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="0"   y="54"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="27"  y="54"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="54"  y="54"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="81"  y="54"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="108" y="54"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="0"   y="81"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="27"  y="81"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="54"  y="81"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="81"  y="81"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="108" y="81"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="0"   y="108" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="27"  y="108" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="54"  y="108" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="81"  y="108" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+      <rect x="108" y="108" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    </g>
+  </defs>
+
+  <rect x="0" y="0" width="1360" height="1380" fill="#FFFFFF"/>
+
+  <!-- ============ TITLE ============ -->
+  <text class="title" x="40" y="52">Linear attention and modern RNNs, one bracket move</text>
+  <text class="sub" x="40" y="76">Take the softmax out and the same product can be grouped the other way. The cache becomes one fixed matrix, and every paper since is about how to forget it.</text>
+  <line x1="40" y1="88" x2="196" y2="88" stroke="#EC4899" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- ============ PANEL 1 ============ -->
+  <rect x="40" y="110" width="1280" height="330" rx="14" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2" stroke-dasharray="6,4"/>
+  <circle cx="88" cy="136" r="13" fill="#EC4899"/>
+  <text class="mid b7" x="88" y="141" font-size="13" fill="#FFFFFF">1</text>
+  <text class="sec" x="112" y="141">THE BRACKET MOVE, AND WHY IT DELETES THE CACHE</text>
+  <text class="ssub" x="72" y="164">The softmax sits between q·Kᵀ and V, so the product has to be evaluated left to right. Remove it and the right pair can go first, which changes what has to be stored.</text>
+
+  <!-- left card : softmax attention -->
+  <rect x="72" y="186" width="588" height="236" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.4" filter="url(#sh-sm)"/>
+  <rect x="92" y="204" width="176" height="24" rx="12" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.2"/>
+  <text class="mid b bl" x="180" y="220" font-size="11">SOFTMAX ATTENTION</text>
+  <rect x="278" y="204" width="96" height="24" rx="12" fill="#FEE2E2" stroke="#EF4444" stroke-width="1.2"/>
+  <text class="mid b rd" x="326" y="220" font-size="11">O(n²) time</text>
+
+  <text class="mono b" x="92" y="262" font-size="15" fill="#1E293B">y  =  ( q · Kᵀ ) · V</text>
+  <text class="s11" x="92" y="284">the softmax forces that grouping, so the first result has shape</text>
+  <rect x="92" y="294" width="460" height="30" rx="6" fill="#FEE2E2" stroke="#EF4444" stroke-width="1.4"/>
+  <text class="mono mid b rd" x="322" y="314" font-size="12">1 × n     one score for every past token</text>
+
+  <text class="b rd" x="92" y="342" font-size="11">so every past k and v has to be kept, one row per token</text>
+  <rect x="92" y="352" width="196" height="20" rx="4" fill="#FEE2E2" stroke="#EF4444" stroke-width="1"/>
+  <text class="mono mid rd" x="190" y="366" font-size="10">k₁ , v₁</text>
+  <rect x="92" y="376" width="196" height="20" rx="4" fill="#FEE2E2" stroke="#EF4444" stroke-width="1"/>
+  <text class="mono mid rd" x="190" y="390" font-size="10">k₂ , v₂</text>
+  <rect x="92" y="400" width="196" height="20" rx="4" fill="#FEE2E2" stroke="#EF4444" stroke-width="1"/>
+  <text class="mono mid rd" x="190" y="414" font-size="10">k₃ , v₃   …</text>
+  <path d="M 300,354 L 300,414" fill="none" stroke="#EF4444" stroke-width="1.5" marker-end="url(#ar-rd)"/>
+  <text class="s11 rd" x="314" y="374">one row added per token,</text>
+  <text class="s11 rd" x="314" y="392">and it is never freed</text>
+
+  <!-- right card : linear attention -->
+  <rect x="700" y="186" width="588" height="236" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.4" filter="url(#sh-sm)"/>
+  <rect x="720" y="204" width="176" height="24" rx="12" fill="#ECFDF5" stroke="#10B981" stroke-width="1.2"/>
+  <text class="mid b gr" x="808" y="220" font-size="11">LINEAR ATTENTION</text>
+  <rect x="906" y="204" width="96" height="24" rx="12" fill="#ECFDF5" stroke="#10B981" stroke-width="1.2"/>
+  <text class="mid b gr" x="954" y="220" font-size="11">O(n) time</text>
+
+  <text class="mono b" x="720" y="262" font-size="15" fill="#1E293B">y  =  φ(q) · ( φ(K)ᵀ · V )</text>
+  <text class="s11" x="720" y="284">nothing in the way now, so the right pair goes first and gives</text>
+  <rect x="720" y="294" width="72" height="72" rx="6" fill="#ECFDF5" stroke="#10B981" stroke-width="1.6"/>
+  <text class="mono mid b gr" x="756" y="335" font-size="13">d × d</text>
+  <text class="s11" x="812" y="314">n has left the shape entirely.</text>
+  <text class="s11" x="812" y="332">Call it S. It is the same matrix at</text>
+  <text class="s11" x="812" y="350">1 k tokens and at 1 M tokens.</text>
+
+  <text class="b gr" x="720" y="392" font-size="11">S is the whole memory, and it is updated in place</text>
+  <text class="mono b gr" x="720" y="414" font-size="12">S ← S + kₜ · vₜᵀ</text>
+  <text class="s11" x="892" y="414">one add per token, nothing kept per token</text>
+
+  <!-- ============ PANEL 2 ============ -->
+  <rect x="40" y="460" width="1280" height="390" rx="14" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2" stroke-dasharray="6,4"/>
+  <circle cx="88" cy="486" r="13" fill="#8B5CF6"/>
+  <text class="mid b7" x="88" y="491" font-size="13" fill="#FFFFFF">2</text>
+  <text class="sec" x="112" y="491">WHAT THAT MATRIX ACTUALLY IS, A WRITE AND A READ</text>
+  <text class="ssub" x="72" y="514">Each token writes one outer product into S. The query pulls a mixture back out. This is an RNN, and it is exactly what runs at inference time.</text>
+
+  <text class="b vi" x="108" y="540" font-size="11">WRITE, token t adds one rank-one update</text>
+
+  <!-- k column -->
+  <g transform="translate(108,586)">
+    <rect x="0" y="0"   width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.85"/>
+    <rect x="0" y="27"  width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.25"/>
+    <rect x="0" y="54"  width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.65"/>
+    <rect x="0" y="81"  width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.15"/>
+    <rect x="0" y="108" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.50"/>
+    <rect x="0" y="0"   width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="0" y="27"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="0" y="54"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="0" y="81"  width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="0" y="108" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+  </g>
+  <text class="mono end b vi" x="102" y="656" font-size="12">kₜ</text>
+
+  <!-- v row -->
+  <g transform="translate(138,556)">
+    <rect x="0"   y="0" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.30"/>
+    <rect x="27"  y="0" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.90"/>
+    <rect x="54"  y="0" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.55"/>
+    <rect x="81"  y="0" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.20"/>
+    <rect x="108" y="0" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.70"/>
+    <rect x="0"   y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="27"  y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="54"  y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="81"  y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="108" y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+  </g>
+  <text class="mono b vi" x="278" y="574" font-size="12">vₜᵀ</text>
+
+  <!-- outer product grid : row opacity = k, cell opacity = v -->
+  <g transform="translate(138,586)">
+    <g opacity="0.85">
+      <rect x="0" y="0" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.30"/>
+      <rect x="27" y="0" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.90"/>
+      <rect x="54" y="0" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.55"/>
+      <rect x="81" y="0" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.20"/>
+      <rect x="108" y="0" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.70"/>
+    </g>
+    <g opacity="0.25">
+      <rect x="0" y="27" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.30"/>
+      <rect x="27" y="27" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.90"/>
+      <rect x="54" y="27" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.55"/>
+      <rect x="81" y="27" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.20"/>
+      <rect x="108" y="27" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.70"/>
+    </g>
+    <g opacity="0.65">
+      <rect x="0" y="54" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.30"/>
+      <rect x="27" y="54" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.90"/>
+      <rect x="54" y="54" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.55"/>
+      <rect x="81" y="54" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.20"/>
+      <rect x="108" y="54" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.70"/>
+    </g>
+    <g opacity="0.15">
+      <rect x="0" y="81" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.30"/>
+      <rect x="27" y="81" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.90"/>
+      <rect x="54" y="81" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.55"/>
+      <rect x="81" y="81" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.20"/>
+      <rect x="108" y="81" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.70"/>
+    </g>
+    <g opacity="0.50">
+      <rect x="0" y="108" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.30"/>
+      <rect x="27" y="108" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.90"/>
+      <rect x="54" y="108" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.55"/>
+      <rect x="81" y="108" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.20"/>
+      <rect x="108" y="108" width="24" height="24" rx="3" fill="#8B5CF6" opacity="0.70"/>
+    </g>
+  </g>
+  <use href="#g5" x="138" y="586"/>
+  <text class="mono mid b vi" x="204" y="736" font-size="12">kₜ · vₜᵀ</text>
+
+  <text class="mid b" x="310" y="660" font-size="20" fill="#0E7490">+</text>
+
+  <!-- S grid (write side) -->
+  <g transform="translate(350,586)">
+    <rect x="0" y="0" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.45"/><rect x="27" y="0" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.70"/><rect x="54" y="0" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.30"/><rect x="81" y="0" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.55"/><rect x="108" y="0" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.60"/>
+    <rect x="0" y="27" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.25"/><rect x="27" y="27" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.50"/><rect x="54" y="27" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.65"/><rect x="81" y="27" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.20"/><rect x="108" y="27" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.35"/>
+    <rect x="0" y="54" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.60"/><rect x="27" y="54" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.35"/><rect x="54" y="54" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.45"/><rect x="81" y="54" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.70"/><rect x="108" y="54" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.25"/>
+    <rect x="0" y="81" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.30"/><rect x="27" y="81" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.55"/><rect x="54" y="81" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.25"/><rect x="81" y="81" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.40"/><rect x="108" y="81" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.50"/>
+    <rect x="0" y="108" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.50"/><rect x="27" y="108" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.40"/><rect x="54" y="108" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.60"/><rect x="81" y="108" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.30"/><rect x="108" y="108" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.45"/>
+  </g>
+  <use href="#g5" x="350" y="586"/>
+  <text class="mono mid b cy" x="416" y="578" font-size="12">S</text>
+  <text class="mid s10" x="416" y="736">d × d, never grows</text>
+
+  <text class="b sl" x="516" y="614" font-size="11">Rank one</text>
+  <text class="s11" x="516" y="634">every row of the grid is</text>
+  <text class="s11" x="516" y="652">the same vₜ pattern,</text>
+  <text class="s11" x="516" y="670">scaled by that row's kₜ.</text>
+  <text class="s11" x="516" y="694">Nothing about token t is</text>
+  <text class="s11" x="516" y="712">stored, it is folded in.</text>
+
+  <text class="mono b vi" x="108" y="764" font-size="13">Sₜ = Sₜ₋₁ + kₜ · vₜᵀ</text>
+
+  <!-- read side -->
+  <text class="b bl" x="716" y="540" font-size="11">READ, the query pulls a mixture back out</text>
+
+  <g transform="translate(716,640)">
+    <rect x="0"   y="0" width="24" height="24" rx="3" fill="#3B82F6" opacity="0.60"/>
+    <rect x="27"  y="0" width="24" height="24" rx="3" fill="#3B82F6" opacity="0.25"/>
+    <rect x="54"  y="0" width="24" height="24" rx="3" fill="#3B82F6" opacity="0.80"/>
+    <rect x="81"  y="0" width="24" height="24" rx="3" fill="#3B82F6" opacity="0.40"/>
+    <rect x="108" y="0" width="24" height="24" rx="3" fill="#3B82F6" opacity="0.35"/>
+    <rect x="0"   y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="27"  y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="54"  y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="81"  y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="108" y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+  </g>
+  <text class="mono mid b bl" x="782" y="632" font-size="12">qₜ</text>
+
+  <text class="mid b" x="872" y="660" font-size="20" fill="#64748B">×</text>
+
+  <g transform="translate(896,586)">
+    <rect x="0" y="0" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.45"/><rect x="27" y="0" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.70"/><rect x="54" y="0" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.30"/><rect x="81" y="0" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.55"/><rect x="108" y="0" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.60"/>
+    <rect x="0" y="27" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.25"/><rect x="27" y="27" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.50"/><rect x="54" y="27" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.65"/><rect x="81" y="27" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.20"/><rect x="108" y="27" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.35"/>
+    <rect x="0" y="54" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.60"/><rect x="27" y="54" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.35"/><rect x="54" y="54" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.45"/><rect x="81" y="54" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.70"/><rect x="108" y="54" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.25"/>
+    <rect x="0" y="81" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.30"/><rect x="27" y="81" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.55"/><rect x="54" y="81" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.25"/><rect x="81" y="81" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.40"/><rect x="108" y="81" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.50"/>
+    <rect x="0" y="108" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.50"/><rect x="27" y="108" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.40"/><rect x="54" y="108" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.60"/><rect x="81" y="108" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.30"/><rect x="108" y="108" width="24" height="24" rx="3" fill="#06B6D4" opacity="0.45"/>
+  </g>
+  <use href="#g5" x="896" y="586"/>
+  <text class="mono mid b cy" x="962" y="578" font-size="12">S</text>
+
+  <text class="mid b" x="1052" y="660" font-size="20" fill="#64748B">=</text>
+
+  <g transform="translate(1076,640)">
+    <rect x="0"   y="0" width="24" height="24" rx="3" fill="#10B981" opacity="0.50"/>
+    <rect x="27"  y="0" width="24" height="24" rx="3" fill="#10B981" opacity="0.55"/>
+    <rect x="54"  y="0" width="24" height="24" rx="3" fill="#10B981" opacity="0.40"/>
+    <rect x="81"  y="0" width="24" height="24" rx="3" fill="#10B981" opacity="0.65"/>
+    <rect x="108" y="0" width="24" height="24" rx="3" fill="#10B981" opacity="0.45"/>
+    <rect x="0"   y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="27"  y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="54"  y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="81"  y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+    <rect x="108" y="0" width="24" height="24" rx="3" fill="none" stroke="#CBD5E1"/>
+  </g>
+  <text class="mono mid b gr" x="1142" y="632" font-size="12">yₜ</text>
+
+  <text class="mono b bl" x="716" y="764" font-size="13">yₜ = qₜ · S</text>
+  <text class="s11" x="880" y="764">every pair ever written contributes, weighted by how much its key resembles qₜ</text>
+
+  <rect x="72" y="788" width="1216" height="40" rx="10" fill="#FEF9C3" stroke="#EAB308" stroke-width="1.5"/>
+  <text class="b ye" x="92" y="813" font-size="12">S is an associative memory. Write a key with its value, query it back later. When two keys look alike their values blend, and no fixed state can undo that blend.</text>
+
+  <!-- ============ PANEL 3 ============ -->
+  <rect x="40" y="870" width="1280" height="340" rx="14" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2" stroke-dasharray="6,4"/>
+  <circle cx="88" cy="896" r="13" fill="#EAB308"/>
+  <text class="mid b7" x="88" y="901" font-size="13" fill="#FFFFFF">3</text>
+  <text class="sec" x="112" y="901">EVERY PAPER SINCE IS ABOUT HOW TO FORGET</text>
+  <text class="ssub" x="72" y="924">A plain running sum saturates, so old pairs blur into new ones. Each line below changes the middle term of the update, and nothing else.</text>
+
+  <text class="b s10" x="92" y="954" font-size="10">ARCHITECTURE</text>
+  <text class="b s10" x="352" y="954" font-size="10">THE UPDATE RULE, THE ONLY THING THAT MOVES</text>
+  <text class="b s10" x="800" y="954" font-size="10">WHAT IT BUYS</text>
+
+  <rect x="72" y="968" width="1216" height="38" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.3"/>
+  <text class="n12" x="92" y="992">Linear attention, 2020</text>
+  <text class="mono b vi" x="352" y="992" font-size="12">Sₜ = Sₜ₋₁ + kₜvₜᵀ</text>
+  <text class="s11" x="800" y="992">nothing. It adds forever, so the matrix saturates and old pairs blur.</text>
+
+  <rect x="72" y="1012" width="1216" height="38" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.3"/>
+  <text class="n12" x="92" y="1036">RetNet, 2023</text>
+  <text class="mono b vi" x="352" y="1036" font-size="12">Sₜ = γ · Sₜ₋₁ + kₜvₜᵀ</text>
+  <text class="s11" x="800" y="1036">one fixed decay γ, so the past fades on a schedule. Same for every token.</text>
+
+  <rect x="72" y="1056" width="1216" height="38" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.3"/>
+  <text class="n12" x="92" y="1080">GLA, 2024</text>
+  <text class="mono b vi" x="352" y="1080" font-size="12">Sₜ = Diag(αₜ) · Sₜ₋₁ + kₜvₜᵀ</text>
+  <text class="s11" x="800" y="1080">a gate read off the token, so it forgets channel by channel, on demand.</text>
+
+  <rect x="72" y="1100" width="1216" height="38" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.3"/>
+  <text class="n12" x="92" y="1124">DeltaNet, 2024</text>
+  <text class="mono b vi" x="352" y="1124" font-size="12">Sₜ = Sₜ₋₁(I − βₜkₜkₜᵀ) + βₜkₜvₜᵀ</text>
+  <text class="s11" x="800" y="1124">erases whatever was stored at that key, then writes. A replace, not an add.</text>
+
+  <rect x="72" y="1144" width="1216" height="38" rx="8" fill="#FEF9C3" stroke="#EAB308" stroke-width="1.6"/>
+  <text class="n12" x="92" y="1168">Gated DeltaNet, 2025</text>
+  <text class="mono b ye" x="352" y="1168" font-size="12">the gate and the replace, together</text>
+  <text class="s11 ye" x="800" y="1168">forgets on demand and overwrites cleanly. What the 2026 hybrids ship.</text>
+
+  <text class="s11" x="72" y="1200">Read down the middle column. The write, the read and the shape of S are identical in all five, only the term in front of Sₜ₋₁ ever changes.</text>
+
+  <!-- ============ PANEL 4 : TWO ROADS ============ -->
+  <text class="b s10" x="72" y="1238" font-size="11" fill="#94A3B8">TWO ROADS, ONE DESTINATION</text>
+
+  <rect x="72" y="1252" width="520" height="76" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.4" filter="url(#sh-sm)"/>
+  <rect x="72" y="1252" width="5" height="76" rx="2.5" fill="#3B82F6"/>
+  <text class="n12" x="92" y="1277">Coming from attention</text>
+  <text class="s11" x="92" y="1298">drop the softmax, reassociate, then bolt a decay, a gate</text>
+  <text class="s11" x="92" y="1316">or a delta rule back on to control the forgetting</text>
+  <path d="M 596,1290 L 608,1290" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#ar-sl)"/>
+
+  <rect x="612" y="1268" width="136" height="44" rx="10" fill="#FEF9C3" stroke="#EAB308" stroke-width="1.6" filter="url(#sh-sm)"/>
+  <text class="mid b ye" x="680" y="1288" font-size="11">the same</text>
+  <text class="mid b ye" x="680" y="1304" font-size="11">recurrence</text>
+
+  <path d="M 764,1290 L 752,1290" fill="none" stroke="#94A3B8" stroke-width="1.6" marker-end="url(#ar-sl)"/>
+  <rect x="768" y="1252" width="520" height="76" rx="10" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.4" filter="url(#sh-sm)"/>
+  <rect x="768" y="1252" width="5" height="76" rx="2.5" fill="#EC4899"/>
+  <text class="n12" x="788" y="1277">Coming from RNNs</text>
+  <text class="s11" x="788" y="1298">RWKV-7 generalises the delta rule, xLSTM adds multiplicative</text>
+  <text class="s11" x="788" y="1316">gating, and xLSTM-7B trains 3.5x faster than an equal transformer</text>
+</svg>

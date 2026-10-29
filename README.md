@@ -20,7 +20,7 @@ Attention is not being replaced because it works badly. It is being replaced bec
 
 Every alternative here makes the same trade. **Replace a cache that grows with a state that does not**, and accept that a fixed state eventually forgets. This repository documents what each family does with that trade, and what it costs when the state runs out.
 
-It is the third of a series. [Language Models from Scratch](https://github.com/Thibault-GAREL/Language_Models) builds the 2017 Transformer, [modern-transformer](https://github.com/Thibault-GAREL/LLMs_modern_from_scratch) rebuilds everything that changed **inside** it, and this one covers what tries to **replace** it.
+It is the third of a series. [Original LLM](https://github.com/Thibault-GAREL/Language_Models) builds the 2017 Transformer, [Modern LLM](https://github.com/Thibault-GAREL/LLMs_modern_from_scratch) rebuilds everything that changed **inside** it, and this one covers what tries to **replace** it.
 
 🚨 **The documentation is the deliverable right now.** The Python package in "Repository structure" is the plan, not shipped code.
 
@@ -281,7 +281,8 @@ This project is a study, so the sources matter more than usual:
 - 📄 [xLSTM, Extended Long Short-Term Memory](https://arxiv.org/abs/2405.04517) (Beck et al., 2024)
 - 📄 [RWKV, Reinventing RNNs for the Transformer Era](https://arxiv.org/abs/2305.13048) (Peng et al., 2023)
 - 📄 [Zoology, Measuring and Improving Recall in Efficient Language Models](https://arxiv.org/abs/2312.04927) (Arora et al., 2023), the analysis that made the recall gap measurable
-- 🧬 [modern-transformer](https://github.com/Thibault-GAREL/LLMs_modern_from_scratch) (my own model, everything that changed inside the block)
-- 🔁 [llm-harness](https://github.com/Thibault-GAREL/LLM_harness) (my own study of the agent loop that runs a trained model)
+- 🤖 [Original LLM](https://github.com/Thibault-GAREL/Language_Models) (where the series starts, a bigram model and a 2017 Transformer)
+- 🧬 [Modern LLM](https://github.com/Thibault-GAREL/LLMs_modern_from_scratch) (my own model, everything that changed inside the block)
+- 🔁 [llm-harness](https://github.com/Thibault-GAREL/LLM_harness) (my other learning notes, the agent loop that runs a trained model)
 
 Code created by me 😎, Thibault GAREL - [Github](https://github.com/Thibault-GAREL)

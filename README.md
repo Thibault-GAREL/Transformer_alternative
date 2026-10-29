@@ -3,7 +3,7 @@
 ![Python](https://img.shields.io/badge/python-3.12-blue.svg)
 ![PyTorch](https://img.shields.io/badge/PyTorch-2.5.1%2Bcu121-red.svg)
 ![Families](https://img.shields.io/badge/families-4-06B6D4.svg)
-![Status](https://img.shields.io/badge/status-documentation%20first-EAB308.svg)
+![Type](https://img.shields.io/badge/type-learning%20notes-8B5CF6.svg)
 
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Contributions](https://img.shields.io/badge/contributions-welcome-orange.svg)
@@ -22,8 +22,6 @@ Every alternative here makes the same trade. **Replace a cache that grows with a
 
 It is the third of a series. [Original LLM](https://github.com/Thibault-GAREL/Language_Models) builds the 2017 Transformer, [Modern LLM](https://github.com/Thibault-GAREL/LLMs_modern_from_scratch) rebuilds everything that changed **inside** it, and this one covers what tries to **replace** it.
 
-🚨 **The documentation is the deliverable right now.** The Python package in "Repository structure" is the plan, not shipped code.
-
 ---
 
 ## ⚙️ Features
@@ -37,8 +35,6 @@ It is the third of a series. [Original LLM](https://github.com/Thibault-GAREL/La
   🧩 **The hybrids**, the 3:1 ratio three independent teams converged on in March 2026
 
   🗺️ **Five diagrams**, the block comparison plus one per family, each drawn so the mechanism reads from the picture alone
-
-  🧪 **Provider-agnostic comparisons**, the same block harness with one mixer slot, so families swap without touching anything else
 
 ---
 
@@ -217,24 +213,8 @@ diffusion        a whole masked passage, refined in k rounds   k passes, k far b
 │   ├── hybrids.svg           # the 3:1 stack, both wirings, what it buys
 │   └── outsiders.svg         # diffusion, block sparse attention, test-time memory
 │
-├── scripts/
-│   └── md_to_pdf.py          # renders this README to PDF via headless Edge
-│
-├── src/alt/                  # 🚨 planned, not written yet
-│   ├── block.py              # one block, one swappable mixer slot
-│   ├── hybrid.py             # the interleaving pattern and its ratio
-│   │
-│   ├── mixers/
-│   │   ├── attention.py      # the baseline, MHA and GQA
-│   │   ├── ssm.py            # S4, Mamba, Mamba-2, associative scan
-│   │   ├── linear.py         # linear attention, RetNet decay, GLA gating
-│   │   ├── deltanet.py       # the delta write rule, gated variant
-│   │   └── rnn.py            # RWKV and xLSTM style gating
-│   │
-│   └── bench/
-│       ├── kv_memory.py      # the table at the top of this README
-│       ├── mqar.py           # associative recall, the test that matters
-│       └── throughput.py     # tokens per second against context length
+├── docs/
+│   └── README.pdf            # this README, printable
 │
 ├── LICENSE
 ├── README.md
@@ -244,29 +224,12 @@ diffusion        a whole masked passage, refined in k rounds   k passes, k far b
 
 ## 💻 Run it on Your PC
 
-🚨 **There is nothing to run yet.** The README is the current state, the package is the plan. Cloning still helps, the five diagrams read better locally than on GitHub (the `Inter` import is blocked by GitHub's sandbox).
+**Nothing to install, these are notes.** Cloning still helps, the five diagrams read better locally than on GitHub (the `Inter` import is blocked by GitHub's sandbox).
 
 ```bash
 git clone https://github.com/Thibault-GAREL/Transformer_alternative.git
 cd Transformer_alternative
-
-python scripts/md_to_pdf.py     # regenerate README.pdf after any edit
 ```
-
-Once `src/alt/` exists, the intended setup is below.
-
-```bash
-python -m venv .venv # if you don't have a virtual environment
-source .venv/bin/activate   # Linux / macOS
-.venv\Scripts\activate      # Windows
-
-pip install torch pydantic pyyaml rich
-
-python -m alt.bench.mqar --mixer ssm --state 64      # where a fixed state breaks
-python -m alt.bench.kv_memory --context 32768        # the bill, measured
-```
-
-⚠️ The scan kernels of Mamba and friends want a **CUDA-compatible GPU**. On 6 GB of VRAM the ablation sizes fit comfortably, since the point here is comparing mixers at small scale rather than training something large.
 
 ---
 

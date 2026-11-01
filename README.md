@@ -24,20 +24,6 @@ It is the third of a series. [Original LLM](https://github.com/Thibault-GAREL/La
 
 ---
 
-## ⚙️ Features
-
-  🌊 **The four families**, state space models, linear attention, modern RNNs, and the outsiders, each with the algebra that makes it work
-
-  💸 **The number that started everything**, what a KV cache actually costs at 32 k tokens on a 6 GB card
-
-  🎯 **The price of a fixed state**, why associative recall is the test that separates these architectures and nothing else does
-
-  🧩 **The hybrids**, the 3:1 ratio three independent teams converged on in March 2026
-
-  🗺️ **Five diagrams**, the block comparison plus one per family, each drawn so the mechanism reads from the picture alone
-
----
-
 ## Example Outputs
 
 **The bill.** A 7B model, 32 layers, generating with a growing context. This is the whole reason the field moved.
@@ -71,23 +57,7 @@ hybrid, 1 attention     correct, that single layer does the lookup for the other
 
 ---
 
-## ⚙️ How it works
-
-  🧱 **A block has two halves**, a mixer that moves information between tokens and a feed-forward that transforms each token alone.
-
-  🎯 **Only the mixer ever changes.** Every architecture below swaps that one slot and leaves the rest of the block untouched.
-
-  💾 **Attention mixes by keeping every past token** and looking them all up, which is why it needs a growing cache.
-
-  🌊 **A recurrent mixer folds the past into one fixed tensor**, so it carries a constant amount of memory whatever the context.
-
-  ⚡ **The breakthrough was training, not inference.** A parallel scan computes the same recurrence in `O(log n)` depth, so these models train as fast as transformers instead of sequentially.
-
-  🧩 **Hybrids keep a few attention layers**, which buys back the exact recall the fixed states cannot do.
-
----
-
-## 🗺️ Architecture Diagram
+## 🗺️ How it works
 
 ![Architecture Diagram](assets/architecture.svg)
 

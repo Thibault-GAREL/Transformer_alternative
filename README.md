@@ -253,4 +253,4 @@ This project is a study, so the sources matter more than usual:
 - [Modern LLM](https://github.com/Thibault-GAREL/LLMs_modern_from_scratch) (my own model, everything that changed inside the block)
 - [llm-harness](https://github.com/Thibault-GAREL/LLM_harness) (my other learning notes, the agent loop that runs a trained model)
 
-Code created by me 😎, Thibault GAREL - [Github](https://github.com/Thibault-GAREL)
+Notes written by me 😎, Thibault GAREL - [Github](https://github.com/Thibault-GAREL)

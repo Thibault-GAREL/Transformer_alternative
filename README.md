@@ -238,6 +238,15 @@ Titans keeps a small neural memory updated while it reads, so surprising tokens 
 
 ---
 
+<details>
+<summary>📚 <b>My other learning notes</b></summary>
+
+- [llm-harness](https://github.com/Thibault-GAREL/LLM_harness) (the agent loop that runs a trained model)
+
+</details>
+
+---
+
 ## 📖 Inspiration / Sources
 
 This project is a study, so the sources matter more than usual:
@@ -251,6 +260,5 @@ This project is a study, so the sources matter more than usual:
 - [Zoology, Measuring and Improving Recall in Efficient Language Models](https://arxiv.org/abs/2312.04927) (Arora et al., 2023), the analysis that made the recall gap measurable
 - [Original LLM](https://github.com/Thibault-GAREL/Language_Models) (where the series starts, a bigram model and a 2017 Transformer)
 - [Modern LLM](https://github.com/Thibault-GAREL/LLMs_modern_from_scratch) (my own model, everything that changed inside the block)
-- [llm-harness](https://github.com/Thibault-GAREL/LLM_harness) (my other learning notes, the agent loop that runs a trained model)
 
 Notes written by me 😎, Thibault GAREL - [Github](https://github.com/Thibault-GAREL)

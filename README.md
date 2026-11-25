@@ -242,7 +242,6 @@ Titans keeps a small neural memory updated while it reads, so surprising tokens 
 <summary>📚 <b>My other learning notes</b></summary>
 
 - [llm-harness](https://github.com/Thibault-GAREL/LLM_harness) (the agent loop that runs a trained model)
-- [J-space](https://github.com/Thibault-GAREL/J-space) (the words a model thinks but never says, read with the J-lens)
 
 </details>
 
